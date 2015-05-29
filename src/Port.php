@@ -32,4 +32,18 @@ class Port
     {
         return $this->protocol;
     }
+
+    /**
+     * @param  string $alias
+     * @param  int    $port
+     */
+    public static function build(Array $env, $alias, $port, $protocol)
+    {
+        $prefix = "{$alias}_PORT_{$port}_{$protocol}";
+        return new Port(
+            $env["{$prefix}_ADDR"],
+            $env["{$prefix}_PORT"],
+            $env["{$prefix}_PROTO"]
+        );
+    }
 }

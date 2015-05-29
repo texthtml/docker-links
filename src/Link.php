@@ -60,4 +60,44 @@ class Link
     {
         return $this->ports(Port::UDP);
     }
+
+    /**
+     * @param  string $alias
+     */
+    public static function build(Array $env, $alias)
+    {
+        return new Link(
+            $alias,
+            $env["{$alias}_NAME"],
+            self::buildPorts($env, $alias),
+            self::buildEnv($env, $alias)
+        );
+    }
+
+    /**
+     * @param  string $alias
+     */
+    private static function buildEnv(Array $env, $alias)
+    {
+        $linkEnv = [];
+        foreach ($env as $name => $value) {
+            if (preg_match("/^{$alias}_ENV_(?<name>.*)$/", $name, $matches) === 1) {
+                $linkEnv[$matches['name']] = $value;
+            }
+        }
+        return $linkEnv;
+    }
+
+    /**
+     * @param  string $alias
+     */
+    private static function buildPorts(Array $env, $alias)
+    {
+        return array_reduce(array_keys($env), function($linkPorts, $name) use ($env, $alias) {
+            if (preg_match("/^{$alias}_PORT_(?<port>[0-9]+)_(?<protocol>((TCP)|(UDP)))$/", $name, $matches) === 1) {
+                $linkPorts[] = Port::build($env, $alias, $matches['port'], $matches['protocol']);
+            }
+            return $linkPorts;
+        }, []);
+    }
 }

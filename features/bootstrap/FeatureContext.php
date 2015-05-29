@@ -93,4 +93,12 @@ class FeatureContext implements SnippetAcceptingContext
     {
         assert($this->links[$link]->tcpPorts()[$port]->url() === $url);
     }
+
+    /**
+     * @Then the link :link environment variable :name should be :value
+     */
+    public function theLinkEnvironmentVariableShouldBe($link, $name, $value)
+    {
+        assert($this->links[$link]->env()[$name] === $value);
+    }
 }

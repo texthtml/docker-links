@@ -37,3 +37,13 @@ Feature: Parse Docker link environment variables
          And the link "DB" main protocol should be "tcp"
          And the link "DB" tcp port 6379 address should be "172.17.0.5"
          And the link "DB" tcp port 6500 address should be "172.17.0.5"
+
+    Scenario: Link env
+        Given there is the following environment variables
+            | name                         | value                     |
+            | DB_NAME                      | romantic_lumiere/db       |
+            | DB_ENV_USERNAME              | username                  |
+            | DB_ENV_PASSWORD              | password                  |
+        When I parse the environment variables
+        Then the link "DB" environment variable "USERNAME" should be "username"
+         And the link "DB" environment variable "PASSWORD" should be "password"

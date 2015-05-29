@@ -42,47 +42,11 @@ class Links implements ArrayAccess, Countable
 
     public static function buildFrom(Array $env)
     {
-        $links = [];
-        foreach ($env as $name => $value) {
+        return new static(array_reduce(array_keys($env), function($links, $name) use ($env) {
             if (preg_match('/^(?<alias>[A-Z0-9_\.]+)_NAME$/', $name, $matches) === 1) {
-                $links[$matches['alias']] = self::buildLink($env, $matches['alias']);
+                $links[$matches['alias']] = Link::build($env, $matches['alias']);
             }
-        }
-        return new static($links);
-    }
-
-    /**
-     * @param  string $alias
-     */
-    private static function buildLink(Array $env, $alias)
-    {
-        $linkPorts = [];
-        $linkEnv = [];
-        $portRegexp = "/^{$alias}_PORT_(?<port>[0-9]+)_(?<protocol>((TCP)|(UDP)))$/";
-        foreach ($env as $name => $value) {
-            if (preg_match($portRegexp, $name, $matches) === 1) {
-                $linkPorts[] = self::buildPort($env, $alias, $matches['port'], $matches['protocol']);
-            }
-        }
-        return new Link(
-            $alias,
-            $env["{$alias}_NAME"],
-            $linkPorts,
-            $linkEnv
-        );
-    }
-
-    /**
-     * @param  string $alias
-     * @param  int    $port
-     */
-    private static function buildPort(Array $env, $alias, $port, $protocol)
-    {
-        $prefix = "{$alias}_PORT_{$port}_{$protocol}";
-        return new Port(
-            $env["{$prefix}_ADDR"],
-            $env["{$prefix}_PORT"],
-            $env["{$prefix}_PROTO"]
-        );
+            return $links;
+        }, []));
     }
 }
