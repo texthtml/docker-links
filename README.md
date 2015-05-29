@@ -55,42 +55,22 @@ Parse with `docker-links`:
 
 ```php
 $links = \TH\Docker\Links($_ENV);
-```
-    
-<!-- Links is then the following object:
 
-```js
-{
-  "db": {
-    "port": 6379,
-    "hostname": "172.17.0.5",
-    "url": "tcp://172.17.0.5:6379",
-    "proto": "tcp",
-    "name": "romantic_lumiere/db",
-    "tcp": {
-      "6379": {
-        "hostname": "172.17.0.5",
-        "url": "tcp://172.17.0.5:6379"
-      },
-      "6500": {
-        "hostname": "172.17.0.5",
-        "url": "tcp://172.17.0.5:6500"
-      }
-    }
-  },
-  "db_redis": {
-    "port": 6379,
-    "hostname": "172.17.0.2",
-    "url": "tcp://172.17.0.2:6379",
-    "proto": "tcp",
-    "name": "romantic_lumiere/db_redis",
-    "tcp": {
-      "6379": {
-        "hostname": "172.17.0.2",
-        "url": "tcp://172.17.0.2:6379"
-      }
-    }
-  }
+// $links can be used as an array
+echo count($links), PHP_EOL; // 2
+foreach ($links as $alias => $link) {
+    echo $alias, PHP_EOL; // DB, DB_REDIS
 }
+
+// each link is an instanceof [Link](test)
+$link = $links['DB'];
+
+echo $link->name(), PHP_EOL; // /romantic_lumiere/db
+
+echo $link->mainPort()->address(), PHP_EOL; // 172.17.0.5
+echo $link->mainPort()->protocol(), PHP_EOL; // TCP
+echo $link->mainPort()->number(), PHP_EOL; // 6379
+
+echo $link->env()['USERNAME'], PHP_EOL; // username
+echo $link->env()['PASSWORD'], PHP_EOL; // password
 ```
- -->
