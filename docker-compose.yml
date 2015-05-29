@@ -1,0 +1,20 @@
+composer:
+    build: config/docker/php/composer
+    volumes:
+        - composer.json:/scripts/composer.json:rw
+    volumes_from:
+        - vendor
+
+behat:
+    build: config/docker/php/behat
+    volumes:
+        - behat.yml:/scripts/behat.yml/:ro
+        - src:/scripts/src/:ro
+        - features:/scripts/features/:rw
+    volumes_from:
+        - vendor
+
+vendor:
+    build: config/docker/php/vendor
+    volumes:
+        - /scripts/vendor

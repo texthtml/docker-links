@@ -1,0 +1,19 @@
+{
+    "name": "texthtml/docker-links",
+    "description": "A helper for parsing Docker link environment variables.",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "Mathieu Rochette",
+            "email": "mathieu@texthtml.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "TH\\Docker\\": "src/"
+        }
+    },
+    "require-dev": {
+        "behat/behat": "~3.0"
+    }
+}

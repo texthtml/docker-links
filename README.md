@@ -1,5 +1,10 @@
 # Docker Links Environment Parser
 
+[![Build Status](https://img.shields.io/travis/texthtml/docker-links.svg)](https://travis-ci.org/texthtml/docker-links)
+[![Code Status](https://img.shields.io/scrutinizer/g/texthtml/docker-links.svg)](https://scrutinizer-ci.com/g/texthtml/docker-links/build-status/master)
+[![Latest Version](https://img.shields.io/packagist/v/texthtml/docker-links.svg)](https://packagist.org/packages/texthtml/docker-links)
+[![License](https://img.shields.io/packagist/l/texthtml/docker-links.svg)](https://packagist.org/packages/texthtml/docker-links)
+
 [Docker](http://www.docker.io/) has a feature where you can [link containers together by name](http://docs.docker.io/en/latest/use/working_with_links_names/). For example, you start a redis-server in a docker container and expose the default redis port 6379:
 
     $ docker run -p 6379 -d -name redis vagrant/redis-server
