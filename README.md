@@ -9,11 +9,11 @@
 
     $ docker run -p 6379 -d -name redis vagrant/redis-server
 
-You then start another containiner running a node.js web service that needs to access this redis server:
+You then start another containiner running a php-fpm web service that needs to access this redis server:
 
-    $ docker run --link redis:db -d vagrant/nodejs
+    $ docker run --link redis:db -d php:fpm
   
-Docker will internally hook up these the two containers and pass host and port information to the node.js web service via environment variables:
+Docker will internally hook up these the two containers and pass host and port information to the php-fpm web service via environment variables:
 
     DB_NAME=/romantic_lumiere/db
     DB_PORT=tcp://172.17.0.5:6379
@@ -21,14 +21,14 @@ Docker will internally hook up these the two containers and pass host and port i
     DB_PORT_6379_TCP_ADDR=172.17.0.5
     DB_PORT_6379_TCP_PORT=6379
     DB_PORT_6379_TCP_PROTO=tcp
-    
-This library provides a helper `parseLinks` that will parse these environment variables into easily navigable Javascript objects.
+
+This library provides a helper `parseLinks` that will parse these environment variables into easily navigable PHP objects.
 
 ### Install
 
 Install `docker-links` via [composer](https://getcomposer.org/)
 
-    $ npm install docker-links
+    $ composer require docker-links
 
 ### Example Usage
 
