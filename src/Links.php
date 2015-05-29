@@ -3,15 +3,19 @@
 namespace TH\Docker;
 
 use ArrayAccess;
+use ArrayIterator;
 use Countable;
+use Iterator;
 
-class Links implements ArrayAccess, Countable
+class Links implements ArrayAccess, Countable, Iterator
 {
     private $links;
+    private $iterator;
 
     public function __construct(Array $links)
     {
         $this->links = $links;
+        $this->iterator = new ArrayIterator($links);
     }
 
     public function offsetExists($alias) {
@@ -34,6 +38,27 @@ class Links implements ArrayAccess, Countable
     {
         return count($this->links);
     }
+
+    public function current() {
+        return $this->iterator->current();
+    }
+
+    public function key() {
+        return $this->iterator->key();
+    }
+
+    public function next() {
+        return $this->iterator->next();
+    }
+
+    public function rewind() {
+        return $this->iterator->rewind();
+    }
+
+    public function valid() {
+        return $this->iterator->valid();
+    }
+
 
     public static function buildFromEnv()
     {
