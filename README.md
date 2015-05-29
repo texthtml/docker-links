@@ -28,7 +28,7 @@ This library provides a helper `parseLinks` that will parse these environment va
 
 Install `docker-links` via [composer](https://getcomposer.org/)
 
-    $ composer require docker-links
+    $ composer require texthtml/docker-links
 
 ### Example Usage
 
