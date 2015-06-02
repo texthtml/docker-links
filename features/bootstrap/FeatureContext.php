@@ -47,6 +47,14 @@ class FeatureContext implements SnippetAcceptingContext
     }
 
     /**
+     * @Given the link :link should not have been found
+     */
+    public function theLinkShouldNotHaveBeenFound($link)
+    {
+        assert(!isset($this->links[$link]));
+    }
+
+    /**
      * @Given the link :link name should be :name
      */
     public function theLinkNameShouldBe($link, $name)

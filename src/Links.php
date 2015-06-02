@@ -62,7 +62,7 @@ class Links implements ArrayAccess, Countable, Iterator
     public static function buildFrom(Array $env)
     {
         return new static(array_reduce(array_keys($env), function($links, $name) use ($env) {
-            if (preg_match('/^(?<alias>[A-Z0-9_\.]+)_NAME$/', $name, $matches) === 1) {
+            if (preg_match('/^(?<alias>[A-Z0-9_\.]+)_NAME$/', $name, $matches) === 1 && array_key_exists("{$matches['alias']}_PORT", $env)) {
                 $links[$matches['alias']] = Link::build($env, $matches['alias']);
             }
             return $links;
