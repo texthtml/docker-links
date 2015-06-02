@@ -19,11 +19,11 @@ class Links implements ArrayAccess, Countable, Iterator
     }
 
     public function offsetExists($alias) {
-        return isset($this->links[$alias]);
+        return isset($this->links[strtoupper($alias)]);
     }
 
     public function offsetGet($alias) {
-        return $this->links[$alias];
+        return $this->links[strtoupper($alias)];
     }
 
     public function offsetSet($alias, $value) {

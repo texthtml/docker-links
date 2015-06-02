@@ -47,3 +47,16 @@ Feature: Parse Docker link environment variables
         When I parse the environment variables
         Then the link "DB" environment variable "USERNAME" should be "username"
          And the link "DB" environment variable "PASSWORD" should be "password"
+
+    Scenario: alias is case insensitive
+        Given there is the following environment variables
+            | name                         | value                     |
+            | DB_REDIS_NAME                | romantic_lumiere/db_redis |
+            | DB_REDIS_PORT                | tcp://172.17.0.2:6379     |
+            | DB_REDIS_PORT_6379_TCP       | tcp://172.17.0.2:6379     |
+            | DB_REDIS_PORT_6379_TCP_ADDR  | 172.17.0.2                |
+            | DB_REDIS_PORT_6379_TCP_PORT  | 6379                      |
+            | DB_REDIS_PORT_6379_TCP_PROTO | tcp                       |
+        When I parse the environment variables
+        Then the link "DB_REDIS" should have been found
+         And the link "db_redis" should have been found
