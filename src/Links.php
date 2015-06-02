@@ -59,12 +59,6 @@ class Links implements ArrayAccess, Countable, Iterator
         return $this->iterator->valid();
     }
 
-
-    public static function buildFromEnv()
-    {
-        return static::buildFrom($_ENV);
-    }
-
     public static function buildFrom(Array $env)
     {
         return new static(array_reduce(array_keys($env), function($links, $name) use ($env) {

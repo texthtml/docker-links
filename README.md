@@ -54,7 +54,7 @@ Consider a container that accesses three external services on two other containe
 Parse with `docker-links`:
 
 ```php
-$links = \TH\Docker\Links($_ENV);
+$links = \TH\Docker\Links::buildFrom($_ENV);
 
 // $links can be used as an array
 echo count($links), PHP_EOL; // 2
