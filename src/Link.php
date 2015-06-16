@@ -40,9 +40,15 @@ class Link
         }, []);
     }
 
-    public function env()
+    public function env($name = null, $default = null)
     {
-        return $this->env;
+        if ($name === null) {
+            return $this->env;
+        }
+        if (array_key_exists($name, $this->env)) {
+            return $this->env[$name];
+        }
+        return $default;
     }
 
     public function mainPort()

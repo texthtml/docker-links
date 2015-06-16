@@ -48,6 +48,7 @@ Feature: Parse Docker link environment variables
         When I parse the environment variables
         Then the link "DB" environment variable "USERNAME" should be "username"
          And the link "DB" environment variable "PASSWORD" should be "password"
+         And the link "DB" environment variable "EMAIL" should be not exists
 
     Scenario: alias is case insensitive
         Given there is the following environment variables

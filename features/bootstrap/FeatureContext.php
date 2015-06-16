@@ -108,5 +108,15 @@ class FeatureContext implements SnippetAcceptingContext
     public function theLinkEnvironmentVariableShouldBe($link, $name, $value)
     {
         assert($this->links[$link]->env()[$name] === $value);
+        assert($this->links[$link]->env($name) === $value);
+    }
+
+    /**
+     * @Given the link :link environment variable :name should be not exists
+     */
+    public function theLinkEnvironmentVariableShouldBeNotExists($link, $name)
+    {
+        assert($this->links[$link]->env($name) === null);
+        assert($this->links[$link]->env($name, false) === false);
     }
 }
