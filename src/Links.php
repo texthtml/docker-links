@@ -59,6 +59,42 @@ class Links implements ArrayAccess, Countable, Iterator
         return $this->iterator->valid();
     }
 
+    public function groupBy($regexp)
+    {
+        $sections = [];
+        foreach ($this as $name => $link) {
+            list($section, $key) = $this->matchRegexp($name, $regexp);
+            if ($section !== false) {
+                $sections = $this->addToGroup($sections, $link, $section, $key);
+            }
+        }
+        return $sections;
+    }
+
+    private function matchRegexp($name, $regexp)
+    {
+        if (preg_match($regexp, $name, $matches)) {
+            return [
+                array_key_exists('section', $matches) ? $matches['section'] : $matches[1],
+                array_key_exists('key', $matches) ? $matches['key'] : null
+            ];
+        }
+        return [false, false];
+    }
+
+    private function addToGroup(Array $sections, $link, $section, $key)
+    {
+        if (!array_key_exists($section, $sections)) {
+            $sections[$section] = [];
+        }
+        if ($key !== null) {
+            $sections[$section][$key] = $link;
+        } else {
+            $sections[$section][] = $link;
+        }
+        return $sections;
+    }
+
     public static function buildFrom(Array $env)
     {
         return new static(array_reduce(array_keys($env), function($links, $name) use ($env) {

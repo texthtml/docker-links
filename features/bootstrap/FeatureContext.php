@@ -109,4 +109,34 @@ class FeatureContext implements SnippetAcceptingContext
     {
         assert($this->links[$link]->env()[$name] === $value);
     }
+
+    /**
+     * @Given I group the links by :regexp
+     */
+    public function iGroupTheLinksBy($regexp)
+    {
+        $this->groups = $this->links->groupBy($regexp);
+    }
+
+    public function theGroupShouldHaveASingleLink($section)
+    {
+        assert($this->groups[$section] instanceof Link);
+    }
+
+    /**
+     * @Then the group should have one :section link
+     * @Given the group should have :n :section links
+     */
+    public function theGroupShouldHaveLinks($section, $n = 1)
+    {
+        assert(count($this->groups[$section]) === (int)$n);
+    }
+
+    /**
+     * @Given the link #:n in :section main port number should be :portNumber
+     */
+    public function theFirstLinkInMainPortNumberShouldBe($n, $section, $portNumber)
+    {
+        assert($this->groups[$section][$n]->mainPort()->number() === (int)$portNumber);
+    }
 }
