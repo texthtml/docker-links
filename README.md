@@ -72,5 +72,7 @@ echo $link->mainPort()->protocol(), PHP_EOL; // TCP
 echo $link->mainPort()->number(), PHP_EOL; // 6379
 
 echo $link->env()['USERNAME'], PHP_EOL; // username
-echo $link->env()['PASSWORD'], PHP_EOL; // password
+echo $link->env('PASSWORD'), PHP_EOL; // password
+echo $link->env('SOMETHING_ELSE'), PHP_EOL; // NULL
+echo $link->env('SOMETHING', 'default value'), PHP_EOL; // default value
 ```
