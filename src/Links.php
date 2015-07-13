@@ -61,11 +61,52 @@ class Links implements ArrayAccess, Countable, Iterator
 
     public static function buildFrom(Array $env)
     {
-        return new static(array_reduce(array_keys($env), function($links, $name) use ($env) {
-            if (preg_match('/^(?<alias>[A-Z0-9_\.]+)_NAME$/', $name, $matches) === 1 && array_key_exists("{$matches['alias']}_PORT", $env)) {
-                $links[$matches['alias']] = Link::build($env, $matches['alias']);
+        $links = [];
+        foreach (self::envs($env) as $alias => $aliasEnv) {
+            $links[$alias] = Link::build($aliasEnv, $alias);
+        }
+        return new self($links);
+    }
+
+    private static function envs(Array $env)
+    {
+        ksort($env);
+        $envs = [];
+        reset($env);
+        foreach (self::aliases($env) as $alias) {
+            while (strpos(key($env), $alias) === false) {
+                next($env);
             }
-            return $links;
-        }, []));
+            $prefixLength = strlen($alias) + 1;
+            $envs[$alias] = [];
+            do {
+                $envs[$alias][substr(key($env), $prefixLength)] = current($env);
+                next($env);
+            } while (strpos(key($env), $alias) === 0);
+        }
+        return $envs;
+    }
+
+    private static function aliases(Array $env)
+    {
+        return array_filter(self::names($env), function($name) use ($env) {
+            return array_key_exists("{$name}_PORT", $env);
+        });
+    }
+
+    private static function names(Array $env)
+    {
+        $names = [];
+        foreach ($env as $key => $value) {
+            $keyLength = strlen($key);
+            if ($keyLength < 6) {
+                continue;
+            }
+            $pos = strrpos($key, '_NAME');
+            if ($pos + 5 === $keyLength) {
+                $names[] = substr($key, 0, $pos);
+            }
+        }
+        return $names;
     }
 }
