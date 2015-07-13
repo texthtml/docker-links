@@ -9,6 +9,9 @@ class Link
     private $ports;
     private $env;
 
+    /**
+     * @param  string $alias
+     */
     public function __construct($alias, $name, Array $ports, Array $env)
     {
         $this->alias = $alias;
@@ -74,34 +77,28 @@ class Link
     {
         return new Link(
             $alias,
-            $env["{$alias}_NAME"],
-            self::buildPorts($env, $alias),
-            self::buildEnv($env, $alias)
+            $env['NAME'],
+            self::buildPorts($env),
+            self::buildEnv($env)
         );
     }
 
-    /**
-     * @param  string $alias
-     */
-    private static function buildEnv(Array $env, $alias)
+    private static function buildEnv(Array $env)
     {
         $linkEnv = [];
         foreach ($env as $name => $value) {
-            if (preg_match("/^{$alias}_ENV_(?<name>.*)$/", $name, $matches) === 1) {
+            if (preg_match("/^ENV_(?<name>.*)$/", $name, $matches) === 1) {
                 $linkEnv[$matches['name']] = $value;
             }
         }
         return $linkEnv;
     }
 
-    /**
-     * @param  string $alias
-     */
-    private static function buildPorts(Array $env, $alias)
+    private static function buildPorts(Array $env)
     {
-        return array_reduce(array_keys($env), function($linkPorts, $name) use ($env, $alias) {
-            if (preg_match("/^{$alias}_PORT_(?<port>[0-9]+)_(?<protocol>((TCP)|(UDP)))$/", $name, $matches) === 1) {
-                $linkPorts[] = Port::build($env, $alias, $matches['port'], $matches['protocol']);
+        return array_reduce(array_keys($env), function($linkPorts, $name) use ($env) {
+            if (preg_match("/^PORT_(?<port>[0-9]+)_(?<protocol>((TCP)|(UDP)))$/", $name, $matches) === 1) {
+                $linkPorts[] = Port::build($env, $matches['port'], $matches['protocol']);
             }
             return $linkPorts;
         }, []);
