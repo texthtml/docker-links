@@ -76,3 +76,29 @@ Feature: Parse Docker link environment variables
         When I parse the environment variables
         Then the link "romantic_lumiere/db_redis" should have been found
          And the link "SERVER" should not have been found
+
+    Scenario: Unify multiple definitions into one Link
+        Given there is the following environment variables
+            | name                           | value                       |
+            | DB_REDIS_NAME                  | romantic_lumiere/db_redis   |
+            | DB_REDIS_PORT                  | tcp://172.17.0.2:6379       |
+            | DB_REDIS_PORT_6379_TCP         | tcp://172.17.0.2:6379       |
+            | DB_REDIS_PORT_6379_TCP_ADDR    | 172.17.0.2                  |
+            | DB_REDIS_PORT_6379_TCP_PORT    | 6379                        |
+            | DB_REDIS_PORT_6379_TCP_PROTO   | tcp                         |
+            | DB_REDIS_1_NAME                | romantic_lumiere/db_redis_1 |
+            | DB_REDIS_1_PORT                | tcp://172.17.0.2:6379       |
+            | DB_REDIS_1_PORT_6379_TCP       | tcp://172.17.0.2:6379       |
+            | DB_REDIS_1_PORT_6379_TCP_ADDR  | 172.17.0.2                  |
+            | DB_REDIS_1_PORT_6379_TCP_PORT  | 6379                        |
+            | DB_REDIS_1_PORT_6379_TCP_PROTO | tcp                         |
+            | DB_REDIF_NAME                  | romantic_lumiere/db_redif   |
+            | DB_REDIF_PORT                  | tcp://172.17.0.2:6379       |
+            | DB_REDIF_PORT_6379_TCP         | tcp://172.17.0.2:6379       |
+            | DB_REDIF_PORT_6379_TCP_ADDR    | 172.17.0.2                  |
+            | DB_REDIF_PORT_6379_TCP_PORT    | 6379                        |
+            | DB_REDIF_PORT_6379_TCP_PROTO   | tcp                         |
+        When I parse the environment variables
+        Then the link "romantic_lumiere/db_redis" should have been found
+         And the link "romantic_lumiere/db_redis_1" should not have been found
+         And the link "romantic_lumiere/db_redif" should have been found

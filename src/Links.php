@@ -18,19 +18,19 @@ class Links implements ArrayAccess, Countable, Iterator
         $this->iterator = new ArrayIterator($links);
     }
 
-    public function offsetExists($alias) {
-        return isset($this->links[strtoupper($alias)]);
+    public function offsetExists($name) {
+        return isset($this->links[strtoupper($name)]);
     }
 
-    public function offsetGet($alias) {
-        return $this->links[strtoupper($alias)];
+    public function offsetGet($name) {
+        return $this->links[strtoupper($name)];
     }
 
-    public function offsetSet($alias, $value) {
+    public function offsetSet($name, $value) {
         throw new \Exception('\TH\Docker\Links is read only');
     }
 
-    public function offsetUnset($alias) {
+    public function offsetUnset($name) {
         throw new \Exception('\TH\Docker\Links is read only');
     }
 
@@ -59,45 +59,72 @@ class Links implements ArrayAccess, Countable, Iterator
         return $this->iterator->valid();
     }
 
-    public static function buildFrom(Array $env)
+    public static function buildFrom(Array $env, $unique = true)
     {
         $links = [];
-        foreach (self::envs($env) as $alias => $aliasEnv) {
-            $link = Link::build($aliasEnv, $alias);
+        foreach (self::envs($env, $unique) as $prefixEnv) {
+            $link = Link::build($prefixEnv);
             $links[strtoupper($link->name())] = $link;
         }
         return new self($links);
     }
 
-    private static function envs(Array $env)
+    /**
+     * @param  boolean $unique
+     */
+    private static function envs(Array $env, $unique)
     {
         ksort($env);
         $envs = [];
         reset($env);
-        foreach (self::aliases($env) as $alias) {
-            while (strpos(key($env), $alias) === false) {
+        foreach (self::prefixes($env, $unique) as $prefix) {
+            while (strpos(key($env), $prefix) === false) {
                 next($env);
             }
-            $prefixLength = strlen($alias) + 1;
-            $envs[$alias] = [];
+            $prefixLength = strlen($prefix) + 1;
+            $prefixEnv = [];
             do {
-                $envs[$alias][substr(key($env), $prefixLength)] = current($env);
+                $prefixEnv[substr(key($env), $prefixLength)] = current($env);
                 next($env);
-            } while (strpos(key($env), $alias) === 0);
+            } while (strpos(key($env), $prefix) === 0);
+            $envs[] = $prefixEnv;
         }
         return $envs;
     }
 
-    private static function aliases(Array $env)
+    /**
+     * @param  boolean $unique
+     */
+    private static function prefixes(Array $env, $unique)
     {
-        return array_filter(self::names($env), function($name) use ($env) {
-            return array_key_exists("{$name}_PORT", $env);
+        return $unique ? self::uniquePrefixes($env) : self::prefixesWithPorts($env);
+    }
+
+    private static function uniquePrefixes(Array $env)
+    {
+        $prefixes = self::prefixesWithPorts($env);
+        sort($prefixes);
+        return array_reduce($prefixes, function($uniquePrefixes, $prefix) {
+            foreach ($uniquePrefixes as $uniqueprefix) {
+                if (strpos($prefix, $uniqueprefix) !== false || strpos($uniqueprefix, $prefix) !== false) {
+                    return $uniquePrefixes;
+                }
+            }
+            $uniquePrefixes[] = $prefix;
+            return $uniquePrefixes;
+        }, []);
+    }
+
+    private static function prefixesWithPorts(Array $env)
+    {
+        return array_filter(self::allPrefixes($env), function($prefix) use ($env) {
+            return array_key_exists("{$prefix}_PORT", $env);
         });
     }
 
-    private static function names(Array $env)
+    private static function allPrefixes(Array $env)
     {
-        $names = [];
+        $prefixes = [];
         foreach ($env as $key => $value) {
             $keyLength = strlen($key);
             if ($keyLength < 6) {
@@ -105,9 +132,9 @@ class Links implements ArrayAccess, Countable, Iterator
             }
             $pos = strrpos($key, '_NAME');
             if ($pos + 5 === $keyLength) {
-                $names[] = substr($key, 0, $pos);
+                $prefixes[] = substr($key, 0, $pos);
             }
         }
-        return $names;
+        return $prefixes;
     }
 }

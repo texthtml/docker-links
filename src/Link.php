@@ -4,25 +4,18 @@ namespace TH\Docker;
 
 class Link
 {
-    private $alias;
     private $name;
     private $ports;
     private $env;
 
     /**
-     * @param  string $alias
+     * @param  string $name
      */
-    public function __construct($alias, $name, Array $ports, Array $env)
+    public function __construct($name, Array $ports, Array $env)
     {
-        $this->alias = $alias;
         $this->name  = $name;
         $this->ports = $ports;
         $this->env   = $env;
-    }
-
-    public function alias()
-    {
-        return $this->alias;
     }
 
     public function name()
@@ -70,13 +63,9 @@ class Link
         return $this->ports(Port::UDP);
     }
 
-    /**
-     * @param  string $alias
-     */
-    public static function build(Array $env, $alias)
+    public static function build(Array $env)
     {
         return new Link(
-            $alias,
             $env['NAME'],
             self::buildPorts($env),
             self::buildEnv($env)

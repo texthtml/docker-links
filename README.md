@@ -58,14 +58,12 @@ $links = \TH\Docker\Links::buildFrom($_ENV);
 
 // $links can be used as an array
 echo count($links), PHP_EOL; // 2
-foreach ($links as $alias => $link) {
-    echo $alias, PHP_EOL; // DB, DB_REDIS
+foreach ($links as $name => $link) {
+    echo $name, PHP_EOL; // /romantic_lumiere/db, /romantic_lumiere/db
 }
 
 // each link is an instanceof [Link](test)
-$link = $links['DB'];
-
-echo $link->name(), PHP_EOL; // /romantic_lumiere/db
+$link = $links['/romantic_lumiere/db'];
 
 echo $link->mainPort()->address(), PHP_EOL; // 172.17.0.5
 echo $link->mainPort()->protocol(), PHP_EOL; // TCP
