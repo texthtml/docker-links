@@ -63,7 +63,8 @@ class Links implements ArrayAccess, Countable, Iterator
     {
         $links = [];
         foreach (self::envs($env) as $alias => $aliasEnv) {
-            $links[$alias] = Link::build($aliasEnv, $alias);
+            $link = Link::build($aliasEnv, $alias);
+            $links[strtoupper($link->name())] = $link;
         }
         return new self($links);
     }
