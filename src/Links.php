@@ -90,9 +90,13 @@ class Links implements ArrayAccess, Countable, Iterator
 
     private static function aliases(Array $env)
     {
-        return array_filter(self::names($env), function($name) use ($env) {
-            return array_key_exists("{$name}_PORT", $env);
-        });
+        $ports = [];
+        foreach(self::names($env) as $name) {
+            if (array_key_exists("{$name}_PORT", $env) && !array_key_exists($env["{$name}_PORT"], $ports)) {
+                $ports[$env["{$name}_PORT"]] = $name;
+            }
+        }
+        return array_values($ports);
     }
 
     private static function names(Array $env)
@@ -108,6 +112,7 @@ class Links implements ArrayAccess, Countable, Iterator
                 $names[] = substr($key, 0, $pos);
             }
         }
+        sort($names);
         return $names;
     }
 }
