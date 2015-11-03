@@ -32,6 +32,11 @@ class Port
     {
         return $this->protocol;
     }
+    
+    public function __toString()
+    {
+        return strtolower($this->protocol)."://".$this->address.":".$this->number;
+    }
 
     /**
      * @param  int    $port
