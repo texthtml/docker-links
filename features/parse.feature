@@ -102,3 +102,44 @@ Feature: Parse Docker link environment variables
         Then the link "romantic_lumiere/db_redis" should have been found
          And the link "romantic_lumiere/db_redis_1" should not have been found
          And the link "romantic_lumiere/db_redif" should have been found
+
+    Scenario: Filter links by env var name
+        Given there is the following environment variables
+            | name                                  | value                             |
+            | DB_REDIS_MASTER_NAME                  | romantic_lumiere/db_redis_master  |
+            | DB_REDIS_MASTER_PORT                  | tcp://172.17.0.2:6379             |
+            | DB_REDIS_MASTER_PORT_6379_TCP         | tcp://172.17.0.2:6379             |
+            | DB_REDIS_MASTER_PORT_6379_TCP_ADDR    | 172.17.0.2                        |
+            | DB_REDIS_MASTER_PORT_6379_TCP_PORT    | 6379                              |
+            | DB_REDIS_MASTER_PORT_6379_TCP_PROTO   | tcp                               |
+            | DB_REDIS_MASTER_ENV_ROLE              | master                            |
+            | DB_REDIS_SLAVE_NAME                   | romantic_lumiere/db_redis_slave   |
+            | DB_REDIS_SLAVE_PORT                   | tcp://172.17.0.3:6379             |
+            | DB_REDIS_SLAVE_PORT_6379_TCP          | tcp://172.17.0.3:6379             |
+            | DB_REDIS_SLAVE_PORT_6379_TCP_ADDR     | 172.17.0.3                        |
+            | DB_REDIS_SLAVE_PORT_6379_TCP_PORT     | 6379                              |
+            | DB_REDIS_SLAVE_PORT_6379_TCP_PROTO    | tcp                               |
+        When I parse the environment variables containing the env var "role"
+        Then the link "romantic_lumiere/db_redis_master" should have been found
+         And the link "romantic_lumiere/db_redis_slave" should not have been found
+
+    Scenario: Filter links by env var name & value
+        Given there is the following environment variables
+            | name                                  | value                             |
+            | DB_REDIS_MASTER_NAME                  | romantic_lumiere/db_redis_master  |
+            | DB_REDIS_MASTER_PORT                  | tcp://172.17.0.2:6379             |
+            | DB_REDIS_MASTER_PORT_6379_TCP         | tcp://172.17.0.2:6379             |
+            | DB_REDIS_MASTER_PORT_6379_TCP_ADDR    | 172.17.0.2                        |
+            | DB_REDIS_MASTER_PORT_6379_TCP_PORT    | 6379                              |
+            | DB_REDIS_MASTER_PORT_6379_TCP_PROTO   | tcp                               |
+            | DB_REDIS_MASTER_ENV_ROLE              | master                            |
+            | DB_REDIS_SLAVE_NAME                   | romantic_lumiere/db_redis_slave   |
+            | DB_REDIS_SLAVE_PORT                   | tcp://172.17.0.3:6379             |
+            | DB_REDIS_SLAVE_PORT_6379_TCP          | tcp://172.17.0.3:6379             |
+            | DB_REDIS_SLAVE_PORT_6379_TCP_ADDR     | 172.17.0.3                        |
+            | DB_REDIS_SLAVE_PORT_6379_TCP_PORT     | 6379                              |
+            | DB_REDIS_SLAVE_PORT_6379_TCP_PROTO    | tcp                               |
+            | DB_REDIS_SLAVE_ENV_ROLE               | slave                             |
+        When I parse the environment variables containing the env var "role" = "slave"
+        Then the link "romantic_lumiere/db_redis_master" should not have been found
+         And the link "romantic_lumiere/db_redis_slave" should have been found
