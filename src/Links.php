@@ -9,21 +9,24 @@ use Iterator;
 
 class Links implements ArrayAccess, Countable, Iterator
 {
+    private $env;
+    private $unique;
+
     private $links;
     private $iterator;
 
-    public function __construct(Array $links)
+    public function __construct($env, $unique)
     {
-        $this->links = $links;
-        $this->iterator = new ArrayIterator($links);
+        $this->env = $env;
+        $this->unique = $unique;
     }
 
     public function offsetExists($name) {
-        return isset($this->links[strtoupper($name)]);
+        return isset($this->links()[strtoupper($name)]);
     }
 
     public function offsetGet($name) {
-        return $this->links[strtoupper($name)];
+        return $this->links()[strtoupper($name)];
     }
 
     public function offsetSet($name, $value) {
@@ -36,37 +39,78 @@ class Links implements ArrayAccess, Countable, Iterator
 
     public function count()
     {
-        return count($this->links);
+        return count($this->links());
     }
 
     public function current() {
-        return $this->iterator->current();
+        return $this->iterator()->current();
     }
 
     public function key() {
-        return $this->iterator->key();
+        return $this->iterator()->key();
     }
 
     public function next() {
-        return $this->iterator->next();
+        return $this->iterator()->next();
     }
 
     public function rewind() {
-        return $this->iterator->rewind();
+        return $this->iterator()->rewind();
     }
 
     public function valid() {
-        return $this->iterator->valid();
+        return $this->iterator()->valid();
+    }
+
+    public function withEnv($name, $value = null)
+    {
+        $suffix = "_ENV_".strtoupper($name);
+        $n = strlen($suffix);
+
+        $filteredEnv = array_filter($this->env, function ($key) use ($suffix, $n) {
+            return substr_compare($key, $suffix, -$n) === 0;
+        }, ARRAY_FILTER_USE_KEY);
+        if ($value !== null) {
+            $filteredEnv = array_filter($filteredEnv, function ($envValue) use ($value) {
+                return $envValue === $value;
+            });
+        }
+        $prefixes = array_map(function ($key) use ($n) {
+            return substr($key, 0, -$n);
+        }, array_keys($filteredEnv));
+        $prefixes = array_combine($prefixes, array_map("strlen", $prefixes));
+        $env = array_filter($this->env, function ($key) use ($prefixes) {
+            foreach ($prefixes as $prefix => $prefixLength) {
+                if (substr_compare($key, $prefix, 0, $prefixLength) === 0) {
+                    return true;
+                }
+            }
+            return false;
+        }, ARRAY_FILTER_USE_KEY);
+        return new self($env, $this->unique);
     }
 
     public static function buildFrom(Array $env, $unique = true)
     {
-        $links = [];
-        foreach (self::envs($env, $unique) as $prefixEnv) {
-            $link = Link::build($prefixEnv);
-            $links[strtoupper($link->name())] = $link;
+        return new self($env, $unique);
+    }
+
+    private function links() {
+        if ($this->links === null) {
+            $this->links = [];
+            foreach (self::envs($this->env, $this->unique) as $prefixEnv) {
+                $link = Link::build($prefixEnv);
+                $this->links[strtoupper($link->name())] = $link;
+            }
         }
-        return new self($links);
+        return $this->links;
+    }
+
+    private function iterator() {
+        if ($this->iterator === null) {
+            $this->iterator = new ArrayIterator($this->links());
+        }
+        return $this->iterator;
     }
 
     /**
