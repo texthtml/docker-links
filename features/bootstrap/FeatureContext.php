@@ -32,10 +32,15 @@ class FeatureContext implements SnippetAcceptingContext
 
     /**
      * @When I parse the environment variables
+     * @When I parse the environment variables containing the env var :envName
+     * @When I parse the environment variables containing the env var :envName = :envValue
      */
-    public function iParseTheEnvironmentVariables()
+    public function iParseTheEnvironmentVariables($envName = null, $envValue = null)
     {
         $this->links = Links::buildFrom($this->env);
+        if ($envName !== null) {
+            $this->links = $this->links->withEnv($envName, $envValue);
+        }
     }
 
     /**
