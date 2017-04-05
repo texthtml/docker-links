@@ -11,7 +11,7 @@ class Link
     /**
      * @param  string $name
      */
-    public function __construct($name, Array $ports, Array $env)
+    public function __construct($name, array $ports, array $env)
     {
         $this->name  = $name;
         $this->ports = $ports;
@@ -63,7 +63,7 @@ class Link
         return $this->ports(Port::UDP);
     }
 
-    public static function build(Array $env)
+    public static function build(array $env)
     {
         return new Link(
             $env['NAME'],
@@ -72,7 +72,7 @@ class Link
         );
     }
 
-    private static function buildEnv(Array $env)
+    private static function buildEnv(array $env)
     {
         $linkEnv = [];
         foreach ($env as $name => $value) {
@@ -83,7 +83,7 @@ class Link
         return $linkEnv;
     }
 
-    private static function buildPorts(Array $env)
+    private static function buildPorts(array $env)
     {
         return array_reduce(array_keys($env), function($linkPorts, $name) use ($env) {
             if (preg_match("/^PORT_(?<port>[0-9]+)_(?<protocol>((TCP)|(UDP)))$/", $name, $matches) === 1) {

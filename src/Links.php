@@ -90,7 +90,7 @@ class Links implements ArrayAccess, Countable, Iterator
         return new self($env, $this->unique);
     }
 
-    public static function buildFrom(Array $env, $unique = true)
+    public static function buildFrom(array $env, $unique = true)
     {
         return new self($env, $unique);
     }
@@ -116,7 +116,7 @@ class Links implements ArrayAccess, Countable, Iterator
     /**
      * @param  boolean $unique
      */
-    private static function envs(Array $env, $unique)
+    private static function envs(array $env, $unique)
     {
         ksort($env);
         $envs = [];
@@ -139,12 +139,12 @@ class Links implements ArrayAccess, Countable, Iterator
     /**
      * @param  boolean $unique
      */
-    private static function prefixes(Array $env, $unique)
+    private static function prefixes(array $env, $unique)
     {
         return $unique ? self::uniquePrefixes($env) : self::prefixesWithPorts($env);
     }
 
-    private static function uniquePrefixes(Array $env)
+    private static function uniquePrefixes(array $env)
     {
         $prefixes = self::prefixesWithPorts($env);
         sort($prefixes);
@@ -159,14 +159,14 @@ class Links implements ArrayAccess, Countable, Iterator
         }, []);
     }
 
-    private static function prefixesWithPorts(Array $env)
+    private static function prefixesWithPorts(array $env)
     {
         return array_filter(self::allPrefixes($env), function($prefix) use ($env) {
             return array_key_exists("{$prefix}_PORT", $env);
         });
     }
 
-    private static function allPrefixes(Array $env)
+    private static function allPrefixes(array $env)
     {
         $prefixes = [];
         foreach ($env as $key => $value) {
