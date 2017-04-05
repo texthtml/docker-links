@@ -42,7 +42,7 @@ class Port
      * @param  int    $port
      * @param  string $protocol
      */
-    public static function build(Array $env, $port, $protocol)
+    public static function build(array $env, $port, $protocol)
     {
         $prefix = "PORT_{$port}_{$protocol}";
         return new Port(
