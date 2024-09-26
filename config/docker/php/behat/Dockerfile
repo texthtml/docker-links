@@ -1,4 +1,4 @@
-FROM php:5.6
+FROM php:8.3
 
 RUN docker-php-ext-install mbstring
 
