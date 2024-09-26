@@ -15,6 +15,6 @@
     },
     "require-dev": {
         "behat/behat": "~3.0",
-        "symfony/var-dumper": "~2.7"
+        "symfony/var-dumper": "~7.0"
     }
 }
